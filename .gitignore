@@ -183,3 +183,9 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# Test data
+fragments_list.txt
+info_contigs.txt
+abs_fragments_contacts_weighted.txt
+genome.fasta
