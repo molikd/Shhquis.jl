@@ -1,5 +1,10 @@
 module shhquis
 
-greet() = print("Hello World!")
+using NamedArrays
+
+export
+	DistanceMatrixFromTriColumn
+
+include("matrices.jl")
 
 end # module
