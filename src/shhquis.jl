@@ -3,7 +3,7 @@ module shhquis
 using NamedArrays
 
 export
-	DistanceMatrixFromTriColumn
+	coltodist
 
 include("matrices.jl")
 
