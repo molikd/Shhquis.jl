@@ -12,3 +12,18 @@ function coltodist(r::AbstractArray)
     end
     return dist
 end
+
+"""
+Takes ouput of a HiC run and turns it into a distance matrix
+"""
+function builddist(infofile::AbstractString,contctsfile::AbstractString)
+    contiginfo = readdlm(infofile, '\t', header=true)
+    contcts = readdlm(contctcsfile, '\t', header=true)
+    names = view(contiginfo[1,][:, 1])
+    dist = NamedArray(zeros(Int32,length(names),length(names)),(names,names))
+    function findcontig(start::Int32,contigs::AbstractMatrix)
+        return contiginfo[1,][length(contiginfo[1,][:,4][contiginfo[1,][:,4] .< start]),:1]
+    end
+    
+end
+

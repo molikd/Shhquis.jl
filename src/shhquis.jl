@@ -1,9 +1,11 @@
 module shhquis
 
 using NamedArrays
+using DelimitedFiles
 
 export
-	coltodist
+    coltodist
+    builddist
 
 include("matrices.jl")
 
