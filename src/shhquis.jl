@@ -5,6 +5,7 @@ using DelimitedFiles
 using Clustering
 using BioSequences
 using FASTX
+using ArgParse
 
 export
     #rexport from Clustering
