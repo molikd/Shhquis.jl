@@ -12,8 +12,8 @@ RUN apk update \
 
 #MAIN
 
-RUN bin/install.jl \
-    && pwd \
+#RUN bin/install.jl \
+RUN  pwd \
     && ls \ 
     && cp bin/shh.jl /usr/local/bin \
     && cd /home/genomics \
