@@ -47,7 +47,7 @@ Both methods require the same files:
 
 All of these, except the fai file are output of this packages intended underlying toolkit, HiC stuff: https://github.com/koszullab/hicstuff
 
-###Running ssh From Julia Terminal 
+### Running ssh From Julia Terminal 
 
 You can run shh from the Julia terminal in the following manner: 
 
