@@ -14,9 +14,30 @@ export
     coltodist, builddist,
 
     #from reorient
-    ordernames, reorient, write_reorient
+    ordernames, reorient, write_reorient,
+
+    #from shhquis
+    shhquis 
 
 include("matrices.jl")
 include("reorient.jl")
+
+function shhquis(;genomeoutfile::AbstractString="genome.reoriented.fasta",
+                    genomeinfile::AbstractString="genome.fasta",
+                    genomefaifile::AbstractString="genome.fasta.fai",
+                    bg2file::AbstractString="abs_fragments_contacts_weighted.bg2",
+                    contiginfofile::AbstractString="info_contigs.txt",
+                    hclusttype::AbstractString="single")
+
+   contiginfo = readdlm(infofile, '\t', header=true)
+   names = view(contiginfo[1,][:, 1])
+
+   dist = builddist(contiginfofile,bg2file)
+   clustres = hclust(dist, linkage=hclusttype)
+   neworder = ordernames(clustres.order,names)
+   frinfo = reorient(contiginfofile,bg2file,names)
+   write_reorient(genomeinfile,genomeoutfile,frinfo,genomefaifile)  
+
+end
 
 end # module

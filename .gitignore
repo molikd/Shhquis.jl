@@ -189,4 +189,5 @@ fragments_list.txt
 info_contigs.txt
 abs_fragments_contacts_weighted.txt
 genome.fasta
+genome.fasta.fai
 abs_fragments_contacts_weighted.bg2

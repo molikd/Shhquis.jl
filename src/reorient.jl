@@ -68,7 +68,7 @@ function reorient(infofile::AbstractString,contctsfile::AbstractString,orderedna
 end
 
 function write_reorient(genomefile::AbstractString,genomefileout::AbstractString,frinfo::AbstractArray,genomefaifile::AbstractString)
-    genomein = genome = open(FASTA.Reader, genomefile, index = genomefaifile)
+    genomein = open(FASTA.Reader, genomefile, index = genomefaifile)
     genomeout = open(FASTA.Writer, genomefileout)
     frnames = @view allnames(frinfo)[1][:,]
 
