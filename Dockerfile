@@ -10,6 +10,7 @@ RUN apk update \
 
 #MAIN
 
+ENV USER root
 ENV USER_HOME_DIR /${USER}
 ENV JULIA_DEPOT_PATH ${USER_HOME_DIR}/.julia
 
