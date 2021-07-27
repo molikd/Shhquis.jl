@@ -20,7 +20,7 @@ RUN julia -e "using Pkg; Pkg.add(url=\"https://github.com/molikd/Shhquis.jl\")" 
     && chmod a+x /usr/local/bin/shh.jl \
     && wget https://raw.githubusercontent.com/molikd/Shhquis.jl/main/bin/install.jl -O /usr/local/bin/install.jl \
     && chmod a+x /usr/local/bin/install.jl \
-    #&& /usr/local/bin/install.jl \ 
+    && /usr/local/bin/install.jl \ 
     && rm /usr/local/bin/install.jl \
     && rm -rf *.tgz *.tar *.zip \
     && rm -rf /var/cache/apk/* \
