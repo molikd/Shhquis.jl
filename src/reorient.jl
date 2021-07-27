@@ -12,7 +12,7 @@ Given a new order to chromosomes decide on the orientation based on the number o
 """
 function reorient(infofile::AbstractString,contctsfile::AbstractString,orderednames::AbstractArray,)
     contiginfo = readdlm(infofile, '\t', header=true)
-    frinfo = NamedArray(zeros(length(Int32,orderednames),2), (orderednames,["splitp","f/r"]),("contig","contct"))
+    frinfo = NamedArray(zeros(Int32,length(orderednames),2), (orderednames,["splitp","f/r"]),("contig","contct"))
     frnames = @view allnames(frinfo)[1][:,]
     contiginfo = NamedArray(contiginfo[1,],(contiginfo[1,][:,1],contiginfo[2,][1,:]))
     contcts = readdlm(contctsfile, '\t', header=false)
@@ -43,7 +43,7 @@ function reorient(infofile::AbstractString,contctsfile::AbstractString,orderedna
         frinfo[orderednames[i],"splitp"] = floor(Int32,contiginfo[orderednames[i],"length"] / 2)
     end
    
-    dist_front,dist_back = buildist_pivot(frinfo,contcts)
+    dist_front,dist_back = builddist_pivot(frinfo,contcts)
     flip_forward = false
 
     for i = 2:size(frinfo,1)
@@ -73,7 +73,7 @@ function write_reorient(genomefile::AbstractString,genomefileout::AbstractString
     frnames = @view allnames(frinfo)[1][:,]
 
     for i = 1:size(frinfo,1)
-      if frinfo[i,4] == 1
+      if frinfo[i,2] == 1
           write(genomeout,  FASTA.Record(identifier(genomein[frnames[i]]),reverse(sequence(genomein[frnames[i]]))))
       else
           write(genomeout, genomein[frnames[i]])

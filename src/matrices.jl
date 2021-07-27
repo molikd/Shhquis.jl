@@ -19,8 +19,8 @@ Takes ouput of a HiC run and turns it into a distance matrix
 """
 function builddist(infofile::AbstractString,contctsfile::AbstractString)
     contiginfo = readdlm(infofile, '\t', header=true)
-    contcts = readdlm(contctcsfile, '\t', header=false)
-    names = view(contiginfo[1,][:, 1])
+    contcts = readdlm(contctsfile, '\t', header=false)
+    names = @view contiginfo[1,][:, 1]
     dist = NamedArray(zeros(Int32,length(names),length(names)),(names,names))
     for row in eachrow(contcts)
         dist[row[1],row[4]] += row[7] 
