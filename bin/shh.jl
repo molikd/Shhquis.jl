@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #=
 exec julia --color=yes --startup-file=no -e 'include(popfirst!(ARGS))' \
     "${BASH_SOURCE[0]}" "$@"
