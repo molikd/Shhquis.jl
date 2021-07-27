@@ -10,6 +10,9 @@ RUN apk update \
 
 #MAIN
 
+ENV USER_HOME_DIR /${USER}
+ENV JULIA_DEPOT_PATH ${USER_HOME_DIR}/.julia
+
 RUN julia -e "using Pkg; Pkg.add(url=\"https://github.com/molikd/Shhquis.jl\")" \
     && wget https://raw.githubusercontent.com/molikd/Shhquis.jl/main/bin/shh.jl -O /usr/local/bin/shh.jl \
     && chmod a+x /usr/local/bin/shh.jl \
