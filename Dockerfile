@@ -8,7 +8,7 @@ COPY . /home/genomics
 RUN cd /home/genomics
 
 RUN apk update \
-    && apk upgrade \
+    && apk upgrade
 
 #MAIN
 
