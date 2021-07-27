@@ -12,6 +12,12 @@ RUN apk update \
 
 #MAIN
 
-COPY bin/shh.jl /usr/local/bin
-RUN bin/install.jl
+RUN bin/install.jl \
+    && pwd \
+    && ls \ 
+    && cp bin/shh.jl /usr/local/bin \
+    && cd /home/genomics \
+    && rm -rf *.tgz *.tar *.zip \
+    && rm -rf /var/cache/apk/* \
+    && rm -rf /tmp/*
 
