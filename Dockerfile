@@ -12,6 +12,6 @@ RUN apk update \
 
 #MAIN
 
-COPY shh.jl /usr/local/bin
+COPY bin/shh.jl /usr/local/bin
 RUN bin/install.jl
 
