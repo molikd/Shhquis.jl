@@ -4,13 +4,17 @@ exec julia --color=yes --startup-file=no -e 'include(popfirst!(ARGS))' \
     "${BASH_SOURCE[0]}" "$@"
 =#
 
-#using shhquis
+using shhquis
 using ArgParse
 
 function parse_commandline()
     s = ArgParseSettings()
 
     @add_arg_table s begin
+        "--reorient"
+            help = "where to put the reoriented genome"
+            arg_type = String
+            required = true
         "--genome"
             help = "the genome fasta file"
             arg_type = String

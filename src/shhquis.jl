@@ -3,7 +3,6 @@ module shhquis
 using NamedArrays
 using DelimitedFiles
 using Clustering
-using BioSequences
 using FASTX
 using ArgParse
 
@@ -15,7 +14,7 @@ export
     coltodist, builddist,
 
     #from reorient
-    ordernames, reorient, write_reorientfai
+    ordernames, reorient, write_reorient
 
 include("matrices.jl")
 include("reorient.jl")
