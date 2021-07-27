@@ -47,13 +47,16 @@ Both methods require the same files:
 
 All of these, except the fai file are output of this packages intended underlying toolkit, HiC stuff: https://github.com/koszullab/hicstuff
 
-### Running ssh From Julia Terminal 
+### Running shh From Julia Terminal 
 
 You can run shh from the Julia terminal in the following manner: 
 
 ```julia
 shh(genomeoutfile="genome.reoriented.fasta",  genomeinfile ="genome.fasta", genomefaifile: ="genome.fasta.fai", bg2file= abs_fragments_contacts_weighted.bg2", contiginfofil ="info_contigs.txt")
 ```
+
+### Running shh From bash Terminal 
+
  On the command line it would look like this:
 
 ```bash
