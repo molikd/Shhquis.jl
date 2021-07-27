@@ -11,4 +11,4 @@ pkg"add Clustering"
 pkg"add FASTX"
 pkg"add ArgParse"
 pkg"precompile"
-
+pkg"gc"
