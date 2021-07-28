@@ -4,6 +4,7 @@ using NamedArrays
 using DelimitedFiles
 using Clustering
 using FASTX
+using BioSequences
 using ArgParse
 
 include("matrices.jl")

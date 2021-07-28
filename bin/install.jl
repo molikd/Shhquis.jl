@@ -8,6 +8,7 @@ using Pkg
 pkg"add NamedArrays"
 pkg"add DelimitedFiles"
 pkg"add Clustering"
+pkg"add BioSequences"
 pkg"add FASTX"
 pkg"add ArgParse"
 pkg"precompile"

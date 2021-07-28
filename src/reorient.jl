@@ -16,12 +16,12 @@ function reorient(infofile::AbstractString,contctsfile::AbstractString,orderedna
     frnames = @view allnames(frinfo)[1][:,]
     contiginfo = NamedArray(contiginfo[1,],(contiginfo[1,][:,1],contiginfo[2,][1,:]))
     contcts = readdlm(contctsfile, '\t', header=false)
- 
+
     function builddist_pivot(frinfo::AbstractArray,contcts::AbstractArray)
         names = allnames(frinfo)[1]
         distf = NamedArray(zeros(Int32,length(names),length(names)),(names,names))
         distb = NamedArray(zeros(Int32,length(names),length(names)),(names,names))
-        
+
         for row in eachrow(contcts)
             if row[2] < frinfo[row[1],"splitp"] && row[5] < frinfo[row[4],"splitp"]
                 distf[row[1],row[4]] += row[7]
@@ -35,14 +35,14 @@ function reorient(infofile::AbstractString,contctsfile::AbstractString,orderedna
                 end
             end
         end
-        
+
         return distf,distb
     end 
 
     for i = 1:size(orderednames,1)
         frinfo[orderednames[i],"splitp"] = floor(Int32,contiginfo[orderednames[i],"length"] / 2)
     end
-   
+
     dist_front,dist_back = builddist_pivot(frinfo,contcts)
     flip_forward = false
 
@@ -74,7 +74,7 @@ function write_reorient(genomefile::AbstractString,genomefileout::AbstractString
 
     for i = 1:size(frinfo,1)
       if frinfo[i,2] == 1
-          write(genomeout,  FASTA.Record(identifier(genomein[frnames[i]]),reverse(sequence(genomein[frnames[i]]))))
+          write(genomeout,  FASTA.Record(identifier(genomein[frnames[i]]),reverse_complement(sequence(genomein[frnames[i]]))))
       else
           write(genomeout, genomein[frnames[i]])
       end

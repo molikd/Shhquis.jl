@@ -8,11 +8,13 @@ NamedArrays = "86f7a689-2022-50b4-a561-43c23ac3c673"
 DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 Clustering = "aaaa29a8-35af-508c-8bc3-b662a17a0fe5"
 FASTX = "c2308a5c-f048-11e8-3e8a-31650f418d12"
+BioSequences = "7e6ae17a-c86d-528c-b3b9-7f778a29fe59"
 ArgParse = "c7e460c6-2fb9-53a9-8c5b-16f535851c63"
 
 [compat]
 NamedArrays = "0.9.5"
 Clustering = "0.13, 0.14"
 FASTX = "1.2.0"
+BioSequences = "2.0.5"
 ArgParse = "1.1.4"
 julia = "1.6.1"
