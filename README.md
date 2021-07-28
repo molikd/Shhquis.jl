@@ -1,6 +1,8 @@
 # shhquis
 Scaffolds from Hifi and High QUalIty Sequences
 
+A package for making your [hicstuff](https://github.com/koszullab/hicstuff) genomes look better. 
+
 ## Installation 
 
 There are two main ways to install shhquis. The first method is to install shhquis through a general Julia package install, in this method accessing sshquis would be best done through `using shhquis` within an interactive Julia session or in a script or another package. This is generally how many other Julia packages look and behave. The other method is to utilize sshquis through it’s container. Helpfully, a bin file has been provided so that interacting with shhquis as a Singularity or Docker container is relatively painless. 
@@ -34,7 +36,11 @@ There are two main ways that shhquis can be used, on the Command line and a pack
 
 https://raw.githubusercontent.com/molikd/Shhquis.jl/main/bin/shh.jl 
 
-and put in your PATH.  Otherwise the script is bundled with the package upon installation. 
+and put in your PATH.  Otherwise the script is bundled with the package upon installation. ie: 
+
+```bash
+wget https://raw.githubusercontent.com/molikd/Shhquis.jl/main/bin/shh.jl -O /usr/local/bin/shh.jl #or wherever your PATH may be
+``` 
 
 The other method of use is through the main function, ‘shh’ 
 
@@ -45,15 +51,18 @@ Both methods require the same files:
 -	A bg2 file (weighted contacts)
 -	And a contig info file (contig	length	n_frags	cumul_length)
 
-All of these, except the fai file are output of this packages intended underlying toolkit, HiC stuff: https://github.com/koszullab/hicstuff
+All of these, except the fai file are output of this packages intended underlying toolkit, HiC stuff: [hicstuff](https://github.com/koszullab/hicstuff)
 
-###Running ssh From Julia Terminal 
+### Running shh From Julia Terminal 
 
 You can run shh from the Julia terminal in the following manner: 
 
 ```julia
 shh(genomeoutfile="genome.reoriented.fasta",  genomeinfile ="genome.fasta", genomefaifile: ="genome.fasta.fai", bg2file= abs_fragments_contacts_weighted.bg2", contiginfofil ="info_contigs.txt")
 ```
+
+### Running shh From bash Terminal 
+
  On the command line it would look like this:
 
 ```bash
