@@ -36,7 +36,11 @@ There are two main ways that shhquis can be used, on the Command line and a pack
 
 https://raw.githubusercontent.com/molikd/Shhquis.jl/main/bin/shh.jl 
 
-and put in your PATH.  Otherwise the script is bundled with the package upon installation. 
+and put in your PATH.  Otherwise the script is bundled with the package upon installation. ie: 
+
+```bash
+wget https://raw.githubusercontent.com/molikd/Shhquis.jl/main/bin/shh.jl -O /usr/local/bin/shh.jl #or wherever your PATH may be
+``` 
 
 The other method of use is through the main function, ‘shh’ 
 
