@@ -13,7 +13,7 @@ In the Julia shell:
 
 ```julia
 using Pkg 
-Pkg.add(url=https://github.com/molikd/Shhquis.jl)
+Pkg.add(url="https://github.com/molikd/Shhquis.jl")
 ```
 
 ### Method Two, As A Container
