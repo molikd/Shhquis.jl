@@ -191,3 +191,5 @@ abs_fragments_contacts_weighted.txt
 genome.fasta
 genome.fasta.fai
 abs_fragments_contacts_weighted.bg2
+Hemileuca_maia.c1.filt.bp.hap1.p_ctg.fasta
+Hemileuca_maia.reorient.take3.fasta
