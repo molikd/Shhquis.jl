@@ -63,9 +63,9 @@ function main()
             hclust_sym = :average
         elseif hclust_algo == "complete"
             hclust_sym = :complete
-        elseif hclust_linkage == "ward"
+        elseif hclust_algo == "ward"
             hclust_sym = :ward
-        elseif hclust_linkage == "ward_presquared"
+        elseif hclust_algo == "ward_presquared"
             hclust_sym = :ward_presquared
         else
             error("not a real hclust linkage type")
