@@ -9,6 +9,7 @@ using ArgParse
 
 include("matrices.jl")
 include("reorient.jl")
+include("determine.jl")
 
 function shh(;genomeoutfile::AbstractString="genome.reoriented.fasta",
                     genomeinfile::AbstractString="genome.fasta",
@@ -51,6 +52,8 @@ export
     coltodist, builddist,
     #from reorient
     ordernames, reorient, write_reorient,
+    #from determine
+
     #from shhquis
     shh
 
