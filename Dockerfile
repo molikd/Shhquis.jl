@@ -1,5 +1,5 @@
 #PREAMBLE
-FROM julia:1.5.4-alpine
+FROM julia:1-alpine
 LABEL maintainer "David Molik <david.molik@usda.gov>"
 
 WORKDIR /home/genomics/
