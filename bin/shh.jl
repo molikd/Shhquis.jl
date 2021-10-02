@@ -1,6 +1,6 @@
 #!/bin/bash
 #=
-exec julia --color=yes --startup-file=no --history-file=no -e 'include(popfirst!(ARGS))' \
+exec julia --color=yes --startup-file=no -e 'include(popfirst!(ARGS))' \
     "${BASH_SOURCE[0]}" "$@"
 =#
 
