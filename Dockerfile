@@ -26,4 +26,5 @@ RUN julia -e "using Pkg; Pkg.add(url=\"https://github.com/molikd/Shhquis.jl\")" 
     && chmod a+x /home/genomics/bin/install.jl \
     && /home/genomics/bin/install.jl \ 
     && rm /home/genomics/bin/install.jl \
+    && chmod -R 777 /home/genomics \
     && rm -rf *.tgz *.tar *.zip
