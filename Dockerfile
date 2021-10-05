@@ -2,17 +2,16 @@
 FROM julia:alpine
 LABEL maintainer "David Molik <david.molik@usda.gov>"
 
-RUN useradd -ms /bin/bash genomics
-USER genomics
-
-WORKDIR /home/genomics/
-RUN cd /home/genomics/
-
 RUN apk update \
     && apk upgrade \
     && apk add bash
 
 #MAIN
+
+RUN adduser genomics
+USER genomics
+WORKDIR /home/genomics/
+RUN cd /home/genomics/
 
 ENV USER genomics
 ENV USER_HOME_DIR /home/genomics
