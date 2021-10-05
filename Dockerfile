@@ -8,7 +8,7 @@ RUN apk update \
 
 #MAIN
 
-RUN adduser genomics
+RUN adduser -D --home /home/genomics --shell /bin/bash genomics
 USER genomics
 WORKDIR /home/genomics/
 RUN cd /home/genomics/
