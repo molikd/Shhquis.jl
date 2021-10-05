@@ -2,6 +2,9 @@
 FROM julia:alpine
 LABEL maintainer "David Molik <david.molik@usda.gov>"
 
+RUN useradd -ms /bin/bash genomics
+USER genomics
+
 WORKDIR /home/genomics/
 RUN cd /home/genomics/
 
@@ -11,9 +14,9 @@ RUN apk update \
 
 #MAIN
 
-ENV USER root
-ENV USER_HOME_DIR /${USER}
-ENV JULIA_DEPOT_PATH ${USER_HOME_DIR}/.julia
+ENV USER genomics
+ENV USER_HOME_DIR /home/genomics
+ENV JULIA_DEPOT_PATH /home/genomics/.julia
 
 RUN julia -e "using Pkg; Pkg.add(url=\"https://github.com/molikd/Shhquis.jl\")" \
     && wget https://raw.githubusercontent.com/molikd/Shhquis.jl/main/bin/shh.jl -O /usr/local/bin/shh.jl \
