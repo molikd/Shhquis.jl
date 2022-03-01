@@ -1,6 +1,8 @@
 # shhquis
 Scaffolds from Hifi and High QUalIty Sequences
 
+[![DOI](https://zenodo.org/badge/386053190.svg)](https://zenodo.org/badge/latestdoi/386053190)
+
 A package for making your [hicstuff](https://github.com/koszullab/hicstuff) genomes look better. 
 
 ## Installation 
