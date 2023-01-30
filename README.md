@@ -60,7 +60,7 @@ All of these, except the fai file are output of this packages intended underlyin
 You can run shh from the Julia terminal in the following manner: 
 
 ```julia
-shh(genomeoutfile="genome.reoriented.fasta",  genomeinfile ="genome.fasta", genomefaifile: ="genome.fasta.fai", bg2file= abs_fragments_contacts_weighted.bg2", contiginfofil ="info_contigs.txt")
+shh(genomeoutfile="genome.reoriented.fasta",  genomeinfile="genome.fasta", genomefaifile="genome.fasta.fai", bg2file="abs_fragments_contacts_weighted.bg2", contiginfofile="info_contigs.txt")
 ```
 
 ### Running shh From bash Terminal 
