@@ -22,7 +22,7 @@ function reorient(infofile::AbstractString,contctsfile::AbstractString,orderedna
         distf = NamedArray(zeros(Int32,length(names),length(names)),(names,names))
         distb = NamedArray(zeros(Int32,length(names),length(names)),(names,names))
 
-        @threads for row in eachrow(contcts)
+        for row in eachrow(contcts)
             if row[2] < frinfo[row[1],"splitp"] && row[5] < frinfo[row[4],"splitp"]
                 distf[row[1],row[4]] += row[7]
                 if row[1] != row[4]
