@@ -6,6 +6,7 @@ using Clustering
 using FASTX
 using BioSequences
 using ArgParse
+using Threads
 
 include("matrices.jl")
 include("reorient.jl")
