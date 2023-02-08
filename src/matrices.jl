@@ -22,13 +22,13 @@ function builddist(infofile::AbstractString,contctsfile::AbstractString)
     contcts = readdlm(contctsfile, '\t', header=false)
     names = @view contiginfo[1,][:, 1]
     dist = NamedArray(zeros(Int32,length(names),length(names)),(names,names))
-    @threads for row in eachrow(contcts)
-        dist[row[1],row[4]] += row[7] 
-        if row[1] != row[4]
-            dist[row[4],row[1]] += row[7]
+    
+    num_rows = size(contcts, 1)
+    @threads for i in 1:num_rows
+        dist[contcts[i,1],contcts[i,4]] += contcts[i,7]
+        if contcts[i,1] != contcts[i,4]
+            dist[contcts[i,4],contcts[i,1]] += contcts[i,7]
         end
     end
-    return dist 
+    return dist
 end
-
-
