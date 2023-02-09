@@ -1,14 +1,14 @@
 """
 A parallelized versino of readlm
 """
-function readlm_parallel(filename::AbstractString, nthreads::Int)
+function readlm_parallel(filename::AbstractString, delim::Char='\t', nthreads::Int)
     n = nrow_of_matrix(filename)
     chunksize = ceil(Int, n / nthreads)
     chunks = [((i-1) * chunksize + 1, min(i * chunksize, n)) for i in 1:nthreads]
     results = SharedArray{Float64, 2}(n, n)
 
     @threads for (start, stop) in chunks
-        submatrix = readlm(filename, '\t', start, stop)
+        submatrix = readlm(filename, delim, start, stop)
         for i in 1:size(submatrix, 1)
             for j in 1:size(submatrix, 2)
                 results[start + i - 1, j] = submatrix[i, j]
