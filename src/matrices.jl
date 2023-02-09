@@ -1,7 +1,7 @@
 """
 A parallelized versino of readlm
 """
-function readlm_parallel(filename::AbstractString, delim::Char='\t', nthreads::Int)
+function readlm_parallel(filename::AbstractString, delim::Char='\t', nthreads::Int=4=4=4=4)
     n = nrow_of_matrix(filename)
     chunksize = ceil(Int, n / nthreads)
     chunks = [((i-1) * chunksize + 1, min(i * chunksize, n)) for i in 1:nthreads]
