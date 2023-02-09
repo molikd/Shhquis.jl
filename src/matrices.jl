@@ -1,8 +1,30 @@
 """
+A parallelized versino of readlm
+"""
+function readlm_parallel(filename::AbstractString, nthreads::Int)
+    n = nrow_of_matrix(filename)
+    chunksize = ceil(Int, n / nthreads)
+    chunks = [((i-1) * chunksize + 1, min(i * chunksize, n)) for i in 1:nthreads]
+    results = SharedArray{Float64, 2}(n, n)
+
+    @threads for (start, stop) in chunks
+        submatrix = readlm(filename, '\t', start, stop)
+        for i in 1:size(submatrix, 1)
+            for j in 1:size(submatrix, 2)
+                results[start + i - 1, j] = submatrix[i, j]
+            end
+        end
+    end
+    return results
+end
+
+
+
+"""
 Crates a matrix from three columns: name 1, name 2, weight
 special thanks to user cbk (13639734) on StackExchange on a faster design on this
 """
-function coltodist(r::AbstractArray)
+function coltodist(r::AbstractArray,nthreads::Int=4)
     names = unique(view(r,:,1))
     dist = NamedArray(zeros(length(names),length(names)),(names,names))
     @threads for i = 1:size(r,1)
@@ -17,9 +39,9 @@ end
 """
 Takes ouput of a HiC run and turns it into a distance matrix
 """
-function builddist(infofile::AbstractString,contctsfile::AbstractString)
+function builddist(infofile::AbstractString,contctsfile::AbstractString,nthreads::Int=4)
     contiginfo = readdlm(infofile, '\t', header=true)
-    contcts = readdlm(contctsfile, '\t', header=false)
+    contcts = readlm_parallel(contctsfile, '\t', nthreads)
     names = @view contiginfo[1,][:, 1]
     dist = NamedArray(zeros(Int32,length(names),length(names)),(names,names))
     

@@ -35,6 +35,10 @@ function parse_commandline()
             help = "linkage is one of single, average, complete, ward, ward_presquared"
             arg_type = String
             required = false
+        "--threads"
+            help = "number of threads shhquis is allowed to use"
+            arg_type = Int
+            default = 1
     end
 
     return parse_args(s)
@@ -77,13 +81,15 @@ function main()
             genomefaifile=parsed_args["fai"],
             bg2file=parsed_args["bg2"],
             contiginfofile=parsed_args["contig"],
-            hclust_linkage=hclust_sym)
+            hclust_linkage=hclust_sym,
+            nthreads=parsed_args["threads"])
     else
         shh(genomeoutfile=parsed_args["reorient"],
             genomeinfile=parsed_args["genome"],
             genomefaifile=parsed_args["fai"],
             bg2file=parsed_args["bg2"],
-            contiginfofile=parsed_args["contig"])
+            contiginfofile=parsed_args["contig"],
+            nthreads=parsed_args["threads"])
     end
 
 end
