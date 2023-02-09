@@ -53,7 +53,7 @@ export
     #rexport from Clustering
     hclust,
     #from matrices
-    readlm_parallel, coltodist, builddist,
+    coltodist, builddist,
     #from reorient
     ordernames, reorient, write_reorient,
     #from determine
