@@ -17,7 +17,7 @@ function shh(;genomeoutfile::AbstractString="genome.reoriented.fasta",
                     genomeinfile::AbstractString="genome.fasta",
                     genomefaifile::AbstractString="genome.fasta.fai",
                     bg2file::AbstractString="abs_fragments_contacts_weighted.bg2",
-                    contiginfofile::AbstractString="info_contigs.txt"
+                    contiginfofile::AbstractString="info_contigs.txt",
                     nthreads::Int=4)
 
    contiginfo = readdlm(contiginfofile, '\t', header=true)
@@ -36,7 +36,7 @@ function shh(;genomeoutfile::AbstractString="genome.reoriented.fasta",
                     genomefaifile::AbstractString="genome.fasta.fai",
                     bg2file::AbstractString="abs_fragments_contacts_weighted.bg2",
                     contiginfofile::AbstractString="info_contigs.txt",
-                    hclust_linkage::Symbol=:single
+                    hclust_linkage::Symbol=:single,
                     nthreads::Int=4)
 
    contiginfo = readdlm(contiginfofile, '\t', header=true)
