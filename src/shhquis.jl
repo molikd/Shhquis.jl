@@ -11,7 +11,7 @@ using ArgParse
 
 include("matrices.jl")
 include("reorient.jl")
-include("determine.jl")
+
 
 function shh(;genomeoutfile::AbstractString="genome.reoriented.fasta",
                     genomeinfile::AbstractString="genome.fasta",
@@ -43,7 +43,7 @@ function shh(;genomeoutfile::AbstractString="genome.reoriented.fasta",
    names = @view contiginfo[1,][:,1]
    dist = builddist(contiginfofile,bg2file,nthreads)
    clustres = hclust(dist, linkage=hclust_linkage, branchorder=:optimal)
-   neworder = ordernames(clustres.order,names)
+   neworder = ordernames(orderdist,names)
    frinfo = reorient(contiginfofile,bg2file,neworder)
    write_reorient(genomeinfile,genomeoutfile,frinfo,genomefaifile)  
 
@@ -56,7 +56,6 @@ export
     coltodist, builddist,
     #from reorient
     ordernames, reorient, write_reorient,
-    #from determine
 
     #from shhquis
     shh
