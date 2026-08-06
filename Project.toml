@@ -1,20 +1,26 @@
 name = "shhquis"
 uuid = "6f7952e3-368c-4f06-92a6-f0e9e2bff709"
-authors = ["David Molik <david.molik@usda.gov>"]
-version = "0.1.0"
+authors = ["David Molik <molik@ksu.edu>"]
+version = "0.2.0"
 
 [deps]
-NamedArrays = "86f7a689-2022-50b4-a561-43c23ac3c673"
-DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
-Clustering = "aaaa29a8-35af-508c-8bc3-b662a17a0fe5"
-FASTX = "c2308a5c-f048-11e8-3e8a-31650f418d12"
-BioSequences = "7e6ae17a-c86d-528c-b3b9-7f778a29fe59"
 ArgParse = "c7e460c6-2fb9-53a9-8c5b-16f535851c63"
+BioSequences = "7e6ae17a-c86d-528c-b3b9-7f778a29fe59"
+Clustering = "aaaa29a8-35af-508c-8bc3-b662a17a0fe5"
+DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
+FASTX = "c2308a5c-f048-11e8-3e8a-31650f418d12"
+NamedArrays = "86f7a689-2022-50b4-a561-43c23ac3c673"
 
 [compat]
-NamedArrays = "0.9.5"
-Clustering = "0.13, 0.14"
-FASTX = "1.2.0"
-BioSequences = "2.0.5"
-ArgParse = "1.1.4"
-julia = "1.6.1"
+ArgParse = "1"
+BioSequences = "3"
+Clustering = "0.15"
+FASTX = "2"
+NamedArrays = "0.10"
+julia = "1.10"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]

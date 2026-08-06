@@ -1,31 +1,27 @@
-#PREAMBLE
-FROM julia:alpine
-LABEL maintainer "David Molik <david.molik@usda.gov>"
+FROM julia:1.12-bookworm
 
-RUN apk update \
-    && apk upgrade \
-    && apk add bash
+LABEL org.opencontainers.image.title="Shhquis.jl" \
+      org.opencontainers.image.description="Scaffold and orient genome assemblies from hicstuff contact data" \
+      org.opencontainers.image.source="https://github.com/molikd/Shhquis.jl" \
+      org.opencontainers.image.licenses="LicenseRef-US-Government-Work"
 
-#MAIN
+RUN useradd --create-home --shell /bin/bash shhquis
 
-RUN adduser -D --home /home/genomics --shell /bin/bash genomics
-USER genomics
-WORKDIR /home/genomics/
-RUN cd /home/genomics/ \
-    && mkdir bin
+WORKDIR /opt/shhquis
+COPY Project.toml ./
+COPY src ./src
+COPY bin/shh.jl /usr/local/bin/shhquis
 
-ENV USER genomics
-ENV USER_HOME_DIR /home/genomics
-ENV JULIA_DEPOT_PATH /home/genomics/.julia
-ENV PATH="/home/genomics/bin:${PATH}" 
+# Resolve the package from the checked-out source so tagged images always
+# contain the exact code associated with their Git tag.
+RUN chmod 0755 /usr/local/bin/shhquis \
+    && julia --project=/opt/shhquis -e 'using Pkg; Pkg.instantiate(); Pkg.precompile()'
 
-RUN julia -e "using Pkg; Pkg.add(url=\"https://github.com/molikd/Shhquis.jl\")" \
-    && wget https://raw.githubusercontent.com/molikd/Shhquis.jl/main/bin/shh.jl -O /home/genomics/bin/shh.jl \
-    && chmod a+x /home/genomics/bin/shh.jl \
-    && wget https://raw.githubusercontent.com/molikd/Shhquis.jl/main/bin/install.jl -O /home/genomics/bin/install.jl \
-    && chmod a+x /home/genomics/bin/install.jl \
-    && /home/genomics/bin/install.jl \ 
-    && rm /home/genomics/bin/install.jl \
-    && chmod -R 777 /home/genomics \
-    && chmod -R 777 /home/genomics/.julia \
-    && rm -rf *.tgz *.tar *.zip
+ENV JULIA_PROJECT=/opt/shhquis \
+    JULIA_NUM_THREADS=auto
+
+USER shhquis
+WORKDIR /data
+
+ENTRYPOINT ["shhquis"]
+CMD ["--help"]

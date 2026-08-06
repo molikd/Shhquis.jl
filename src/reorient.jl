@@ -1,82 +1,113 @@
-"""
-Given an order and names return the reodered names
-"""
-function ordernames(neworder::AbstractArray,oldnames::AbstractArray)
+"""Return `oldnames` in the index order supplied by a clustering result."""
+function ordernames(neworder::AbstractVector{<:Integer}, oldnames::AbstractVector)
     return oldnames[neworder]
 end
 
-
-
 """
-Given a new order to chromosomes decide on the orientation based on the number of contacts
+    reorient(infofile, contactsfile, orderednames)
+
+Choose a forward (`0`) or reverse-complement (`1`) orientation for each contig.
+The decision compares contacts in the first and second half of each contig with
+the preceding contig in the requested output order.
 """
-function reorient(infofile::AbstractString,contctsfile::AbstractString,orderednames::AbstractArray,)
-    contiginfo = readdlm(infofile, '\t', header=true)
-    frinfo = NamedArray(zeros(Int32,length(orderednames),2), (orderednames,["splitp","f/r"]),("contig","contct"))
-    frnames = @view allnames(frinfo)[1][:,]
-    contiginfo = NamedArray(contiginfo[1,],(contiginfo[1,][:,1],contiginfo[2,][1,:]))
-    contcts = readdlm(contctsfile, '\t', header=false)
+function reorient(
+    infofile::AbstractString,
+    contactsfile::AbstractString,
+    orderednames::AbstractVector,
+)
+    original_names, lengths, _ = _read_contig_table(infofile)
+    output_names = string.(orderednames)
+    Set(output_names) == Set(original_names) || throw(ArgumentError("orderednames must contain every input contig exactly once"))
+    length(output_names) == length(original_names) || throw(ArgumentError("orderednames contains duplicate contigs"))
 
-    function builddist_pivot(frinfo::AbstractArray,contcts::AbstractArray)
-        names = allnames(frinfo)[1]
-        distf = NamedArray(zeros(Int32,length(names),length(names)),(names,names))
-        distb = NamedArray(zeros(Int32,length(names),length(names)),(names,names))
+    ncontigs = length(output_names)
+    metadata = NamedArray(
+        zeros(Int64, ncontigs, 2),
+        (output_names, ["splitp", "f/r"]),
+        ("contig", "measurement"),
+    )
 
-        for row in eachrow(contcts)
-            if row[2] < frinfo[row[1],"splitp"] && row[5] < frinfo[row[4],"splitp"]
-                distf[row[1],row[4]] += row[7]
-                if row[1] != row[4]
-                    distf[row[4],row[1]] += row[7]
-                end
-            elseif row[2] > frinfo[row[1],"splitp"] && row[5] > frinfo[row[4],"splitp"] 
-                distb[row[1],row[4]] += row[7]
-                if row[1] != row[4]
-                    distb[row[4],row[1]] += row[7]
-                end
-            end
-        end
-
-        return distf,distb
-    end 
-
-    for i = 1:size(orderednames,1)
-        frinfo[orderednames[i],"splitp"] = floor(Int32,contiginfo[orderednames[i],"length"] / 2)
+    length_by_name = Dict(name => lengths[index] for (index, name) in enumerate(original_names))
+    for name in output_names
+        metadata[name, "splitp"] = fld(length_by_name[name], 2)
     end
 
-    dist_front,dist_back = builddist_pivot(frinfo,contcts)
-    flip_forward = false
+    contacts = readdlm(contactsfile, '\t')
+    size(contacts, 2) >= 7 || throw(ArgumentError("the bg2 contact table must have at least seven columns"))
+    original_index = Dict(name => index for (index, name) in enumerate(original_names))
+    output_index = Dict(name => index for (index, name) in enumerate(output_names))
+    front = zeros(Float64, ncontigs, ncontigs)
+    back = zeros(Float64, ncontigs, ncontigs)
 
-    for i = 2:size(frinfo,1)
-        if dist_front[frnames[i],frnames[i-1]] < dist_back[frnames[i],frnames[i-1]] && flip_forward == false
-            frinfo[frnames[i],"f/r"] = 1
-            flip_forward = true 
-        elseif dist_front[frnames[i],frnames[i-1]] < dist_back[frnames[i],frnames[i-1]] && flip_forward == true
-            frinfo[frnames[i],"f/r"] = 0
-            flip_forward = false
-        elseif dist_front[frnames[i],frnames[i-1]] > dist_back[frnames[i],frnames[i-1]] && flip_forward == false
-            frinfo[frnames[i],"f/r"] = 0
-            flip_forward = false
-        elseif dist_front[frnames[i],frnames[i-1]] > dist_back[frnames[i],frnames[i-1]] && flip_forward == true
-            frinfo[frnames[i],"f/r"] = 1
-            flip_forward = true
-        else
-            frinfo[frnames[i],"f/r"] = 0
+    # Resolve numeric contact identifiers against the original contig table
+    # before looking up their positions in the new scaffold order.
+    for row in axes(contacts, 1)
+        left_name = original_names[_contact_index(contacts[row, 1], original_index, ncontigs)]
+        right_name = original_names[_contact_index(contacts[row, 4], original_index, ncontigs)]
+        left = output_index[left_name]
+        right = output_index[right_name]
+        weight = Float64(contacts[row, 7])
+        isfinite(weight) && weight >= 0 || throw(ArgumentError("contact weights must be finite and non-negative"))
+
+        left_position = Float64(contacts[row, 2])
+        right_position = Float64(contacts[row, 5])
+        if left_position < metadata[left_name, "splitp"] && right_position < metadata[right_name, "splitp"]
+            front[left, right] += weight
+            left == right || (front[right, left] += weight)
+        elseif left_position > metadata[left_name, "splitp"] && right_position > metadata[right_name, "splitp"]
+            back[left, right] += weight
+            left == right || (back[right, left] += weight)
         end
     end
 
-    return frinfo
+    flipped = false
+    for current in 2:ncontigs
+        previous = current - 1
+        if back[current, previous] > front[current, previous]
+            # A stronger back-to-back signal changes the orientation relative
+            # to the preceding contig; front-dominant evidence keeps it.
+            flipped = !flipped
+        elseif back[current, previous] == front[current, previous]
+            metadata[output_names[current], "f/r"] = 0
+            continue
+        end
+        metadata[output_names[current], "f/r"] = flipped ? 1 : 0
+    end
+
+    return metadata
 end
 
-function write_reorient(genomefile::AbstractString,genomefileout::AbstractString,frinfo::AbstractArray,genomefaifile::AbstractString)
-    genomein = open(FASTA.Reader, genomefile, index = genomefaifile)
-    genomeout = open(FASTA.Writer, genomefileout)
-    frnames = @view allnames(frinfo)[1][:,]
+"""
+    write_reorient(genomefile, genomefileout, metadata, genomefaifile)
 
-    for i = 1:size(frinfo,1)
-      if frinfo[i,2] == 1
-          write(genomeout,  FASTA.Record(identifier(genomein[frnames[i]]),reverse_complement(sequence(genomein[frnames[i]]))))
-      else
-          write(genomeout, genomein[frnames[i]])
-      end
+Write contigs in metadata order, reverse-complementing rows whose `f/r` value is
+`1`. FASTA descriptions are preserved in the output.
+"""
+function write_reorient(
+    genomefile::AbstractString,
+    genomefileout::AbstractString,
+    metadata::AbstractMatrix,
+    genomefaifile::AbstractString,
+)
+    genomein = open(FASTA.Reader, genomefile; index=genomefaifile)
+    genomeout = open(FASTA.Writer, genomefileout)
+    contig_names = collect(names(metadata, 1))
+
+    try
+        for (row, name) in enumerate(contig_names)
+            record = genomein[name]
+            if metadata[row, 2] == 1
+                dna = LongDNA{4}(sequence(record))
+                reversed = String(reverse_complement(dna))
+                write(genomeout, FASTA.Record(description(record), reversed))
+            else
+                write(genomeout, record)
+            end
+        end
+    finally
+        close(genomeout)
+        close(genomein)
     end
+
+    return genomefileout
 end
