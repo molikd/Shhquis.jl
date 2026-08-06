@@ -2,27 +2,73 @@ name: Release
 
 on:
   push:
+    branches:
+      - main
     tags:
       - 'v*'
 
 permissions:
   contents: write
 
+# Serialize main-branch release decisions so concurrent merges cannot race to
+# create the same package-version tag.
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
-  release:
+  prepare:
     runs-on: ubuntu-latest
+    outputs:
+      publish: ${{ steps.release.outputs.publish }}
+      tag: ${{ steps.release.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Verify tag matches Project.toml
+      - id: release
+        name: Resolve and create the release tag
         shell: bash
         run: |
           project_version="$(sed -n 's/^version = "\([^"]*\)"/\1/p' Project.toml)"
-          tag_version="${GITHUB_REF_NAME#v}"
-          test "$project_version" = "$tag_version" || {
-            echo "Tag $tag_version does not match Project.toml version $project_version"
+          test -n "$project_version" || {
+            echo "Project.toml does not contain a version"
             exit 1
           }
+
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            tag="$GITHUB_REF_NAME"
+            test "${tag#v}" = "$project_version" || {
+              echo "Tag ${tag} does not match Project.toml version ${project_version}"
+              exit 1
+            }
+          else
+            tag="v${project_version}"
+            if git rev-parse --verify --quiet "refs/tags/${tag}"; then
+              echo "${tag} already exists; no release is needed"
+              echo "publish=false" >> "$GITHUB_OUTPUT"
+              echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git tag --annotate "$tag" --message "Release ${tag}"
+            git push origin "$tag"
+          fi
+
+          echo "publish=true" >> "$GITHUB_OUTPUT"
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+
+  release:
+    needs: prepare
+    if: needs.prepare.outputs.publish == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare.outputs.tag }}
 
       - uses: julia-actions/setup-julia@v2
         with:
@@ -30,6 +76,12 @@ jobs:
       - uses: julia-actions/cache@v2
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          tag_name: ${{ needs.prepare.outputs.tag }}
+          target_commitish: ${{ github.sha }}
 
       - uses: docker/setup-qemu-action@v3
       - uses: docker/setup-buildx-action@v3
@@ -42,9 +94,9 @@ jobs:
         with:
           images: dmolik/shhquis
           tags: |
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
+            type=semver,pattern={{version}},value=${{ needs.prepare.outputs.tag }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ needs.prepare.outputs.tag }}
+            type=semver,pattern={{major}},value=${{ needs.prepare.outputs.tag }}
       - uses: docker/build-push-action@v6
         with:
           context: .
@@ -52,7 +104,3 @@ jobs:
           push: true
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
-
-      - uses: softprops/action-gh-release@v2
-        with:
-          generate_release_notes: true
